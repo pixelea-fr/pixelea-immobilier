@@ -1,0 +1,15 @@
+.ng1-import-progress{
+    background-color: black;
+    color: white;
+    min-height: 50px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    &__bar{
+        width: 100%;
+        height: 10px;position: relative;
+        background: lightgrey;
+    }
+    &__progress{
+        height: 10px;
+    }
+}
