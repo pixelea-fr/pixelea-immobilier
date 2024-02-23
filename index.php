@@ -22,12 +22,16 @@ include_once(NG1_IMMO_PATH . 'includes/cpt/bien.php');
 include_once(NG1_IMMO_PATH . 'includes/cpt_add_data/bien.php');
 include_once(NG1_IMMO_PATH . 'includes/taxonomies/type_de_bien.php');
 include_once(NG1_IMMO_PATH . 'includes/taxonomies/ville.php');
+include_once(NG1_IMMO_PATH . 'includes/taxonomies/etat.php');
+include_once(NG1_IMMO_PATH . 'includes/taxonomies/disponibilite.php');
 include_once(NG1_IMMO_PATH . 'includes/rewrite_rules/bien.php');
 
 // Instanciation des classes
 new Ng1ImmobilierCptBien();
 new Ng1ImmobilierTaxonomyTypeDeBien();
 new Ng1ImmobilierTaxonomyVille();
+new Ng1ImmobilierTaxonomyEtat();
+new Ng1ImmobilierTaxonomyDisponibilite();
 new Ng1BienRewriteRules();
 
 //FILTERS
@@ -45,10 +49,10 @@ include_once(NG1_IMMO_PATH . 'app/admin/index.php');
 
 // immobilier-plugin.php
 include_once(NG1_IMMO_PATH . 'app/models/BienImmobilier.php');
-include_once(NG1_IMMO_PATH . 'app/factories/BienFactory.php');
+//include_once(NG1_IMMO_PATH . 'app/factories/BienFactory.php');
 include_once(NG1_IMMO_PATH . 'app/models/Bien.php');
-include_once(NG1_IMMO_PATH . 'app/models/Appartement.php');
-include_once(NG1_IMMO_PATH . 'app/models/Maison.php');
+//include_once(NG1_IMMO_PATH . 'app/models/Appartement.php');
+//include_once(NG1_IMMO_PATH . 'app/models/Maison.php');
 
 include_once(NG1_IMMO_PATH . 'app/controllers/AfficherBien.php');
 

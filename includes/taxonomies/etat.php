@@ -1,17 +1,17 @@
 <?php
 // Class for registering the taxonomy
-class Ng1ImmobilierTaxonomyTypeDeBien {
+class Ng1ImmobilierTaxonomyEtat {
 
     public function __construct() {
-        // Enregistrement de la taxonomie "Type de bien"
+        // Enregistrement de la taxonomie "État du bien"
         add_action('init', array($this, 'register_taxonomy'));
 
     }
 
     public function register_taxonomy() {
         $labels = array(
-            'name'                       => _x('Types de bien', 'taxonomy general name', 'textdomain'),
-            'singular_name'              => _x('Type de bien', 'taxonomy singular name', 'textdomain'),
+            'name'                       => _x('États du bien', 'taxonomy general name', 'ng1'),
+            'singular_name'              => _x('État du bien', 'taxonomy singular name', 'ng1'),
             // Ajoutez d'autres étiquettes selon vos besoins
         );
 
@@ -24,22 +24,22 @@ class Ng1ImmobilierTaxonomyTypeDeBien {
             'query_var'                  => true,
             'show_in_rest'               => true,
             'publicly_queryable'         => true,
-            'rewrite'                    => array('slug' => 'type-de-bien'),
+            'rewrite'                    => array('slug' => 'etat'),
             // Ajoutez d'autres paramètres selon vos besoins
         );
 
-        register_taxonomy('type_de_bien', array('bien'), $args);
+        register_taxonomy('etat', array('bien'), $args);
 
-        // Ajout des termes par défaut
-        $this->add_default_terms();
+        // Ajout des termes pour l'état du bien
+        $this->add_estate_terms();
     }
 
-    private function add_default_terms() {
-        $default_terms = array('Maison', 'Appartement', 'Terrain','immeuble');
+    private function add_estate_terms() {
+        $estate_terms = array('Neuf', 'Récent', 'Rénové');
 
-        foreach ($default_terms as $term) {
-            if (!term_exists($term, 'type_de_bien')) {
-                wp_insert_term($term, 'type_de_bien');
+        foreach ($estate_terms as $term) {
+            if (!term_exists($term, 'etat')) {
+                wp_insert_term($term, 'etat');
             }
         }
     }

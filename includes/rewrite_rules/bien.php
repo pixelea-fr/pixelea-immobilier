@@ -15,7 +15,7 @@ class Ng1BienRewriteRules {
         // Remplacez 'type_de_bien' et 'ville' par les noms de vos taxonomies
         $wp_rewrite->add_rule('^(bien)\/([^&]+)\/([^&]+)\/(.?.+?)?(:/([0-9]+))?/?$','index.php?post_type=$matches[1]&ville=$matches[3]&type_de_bien=$matches[2]&name=$matches[4]','top');
         $wp_rewrite->add_rule('^(bien)\/([^&]+)\/([^&]+)','index.php?post_type=$matches[1]&ville=$matches[3]&type_de_bien=$matches[2]','top');
-        $wp_rewrite->add_rule('^(bien)\/([^&]+)','index.php?post_type=$matches[1]&type_de_bien=$matches[2]','top');
+        $wp_rewrite->add_rule('^(bien)\/([^&]+)','index.php?post_type=$matches[1]&type_de_bien_ou_ville_ou_etat=$matches[2]','top');
         $wp_rewrite->flush_rules();
     }
 
@@ -27,6 +27,7 @@ class Ng1BienRewriteRules {
     public function add_custom_query_vars($vars) {
         $vars[] = 'type_de_bien';
         $vars[] = 'ville';
+        $vars[] = 'type_de_bien_ou_ville_ou_etat';
         return $vars;
     }
     public function flush_rewrite_rules() {

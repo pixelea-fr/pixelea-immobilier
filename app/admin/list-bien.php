@@ -5,6 +5,7 @@ class Ng1AdminListBien {
        add_filter('manage_bien_posts_columns', array($this, 'addThumbnailColumn'));
         
         // Afficher la miniature dans la colonne ajoutée
+
        add_action('manage_bien_posts_custom_column', array($this, 'displayThumbnailColumn'), 10, 2);
         
      //  // Rendre la colonne triable
@@ -56,7 +57,3 @@ class Ng1AdminListBien {
         }
     }
 }
-
-// Instancier la classe pour que les actions soient ajoutées
-new Ng1AdminListBien();
-

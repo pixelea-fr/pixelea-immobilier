@@ -8,6 +8,8 @@ class ng1BienImmobilierImportPage {
         add_action('admin_init', array($this, 'settings'));
         add_action('wp_ajax_ng1_import_bien_ajax', array($this,'import_bien_ajax')); // Action AJAX
         add_action('wp_ajax_ng1_delete_biens_ajax', array($this,'delete_biens_ajax')); // Action AJAX
+        add_action('wp_ajax_ng1_get_progress_data_ajax', array($this,'ng1_get_progress_data_ajax'));
+        add_action('wp_ajax_ng1_init_progress_data_ajax', array($this,'ng1_init_progress_data_ajax'));
         add_action('admin_enqueue_scripts', array($this, 'load_styles'), 103);
         
     }
@@ -50,55 +52,59 @@ class ng1BienImmobilierImportPage {
         <script>
             jQuery(document).ready(function($) {
                 $('#ng1ImportBien').on('click', function() {
-    // Appel AJAX pour lancer l'import
-    $.ajax({
-        type: 'POST',
-        url: ajaxurl, // L'URL AJAX de WordPress
-        data: {
-            action: 'ng1_import_bien_ajax', // Action AJAX à traiter dans vos fonctions PHP
-            file_path: '<?php echo $path; ?>',
-            security: '<?php echo wp_create_nonce("ng1_import_bien_ajax_nonce"); ?>', // Sécurité contre les attaques CSRF
-        },
-        success: function(response) {
-            // Réponse de l'import
-            console.log(response);
+                    initProgressData();
+                    setInterval(updateProgressData, 5000);
+                // Appel AJAX pour lancer l'import
+                    $.ajax({
+                        type: 'POST',
+                        url: ajaxurl, // L'URL AJAX de WordPress
+                        data: {
+                            action: 'ng1_import_bien_ajax', // Action AJAX à traiter dans vos fonctions PHP
+                            file_path: '<?php echo $path; ?>',
+                            security: '<?php echo wp_create_nonce("ng1_import_bien_ajax_nonce"); ?>', // Sécurité contre les attaques CSRF
+                        },
+                        success: function(response) {
+                            // Réponse de l'import
+                            console.log(response);
 
-            // Parsez la réponse JSON
-            var responseData = JSON.parse(response);
+                            // Parsez la réponse JSON
+                            var responseData = JSON.parse(response);
 
-            // Vérifiez si des données de progression sont présentes
-            if (responseData.percentage !== undefined) {
-                var percentage = responseData.percentage;
-                var currentRow = responseData.current_row;
-                var totalRows = responseData.total_rows;
+                            // Vérifiez si des données de progression sont présentes
+                            if (responseData.percentage !== undefined) {
+                                var percentage = responseData.percentage;
+                                var currentRow = responseData.current_row;
+                                var totalRows = responseData.total_rows;
 
-                // Mettez à jour la barre de progression
-                $('.ng1-import-progress__progress').css('width', percentage);
-                $('.ng1-import-progress').append('<p>Avancement : ' + percentage + ' (Ligne ' + currentRow + '/' + totalRows + ')</p>');
-            } else if (responseData.status === 'success') {
-                // La dernière ligne indique que l'import est terminé avec succès
-                alert('Import terminé avec succès!');
-            }
-        },
-        error: function(error) {
-            // Gestion des erreurs
-            console.error('Erreur lors de l\'import :', error.responseText);
-        },
-        complete: function() {
-            // La fonction complete sera appelée à la fin de la requête AJAX
-            console.log('Requête AJAX terminée.');
-        }
-    });
-});
+                                // Mettez à jour la barre de progression
+                                $('.ng1-import-progress__progress').css('width', percentage);
+                                $('.ng1-import-progress').append('<p>Avancement : ' + percentage + ' (Ligne ' + currentRow + '/' + totalRows + ')</p>');
+                            } else if (responseData.status === 'success') {
+                            
+                                // La dernière ligne indique que l'import est terminé avec succès
+                                alert('Import terminé avec succès!');
+                            }
+                        },
+                        error: function(error) {
+                            // Gestion des erreurs
+                            console.error('Erreur lors de l\'import :', error.responseText);
+                        },
+                        complete: function() {
+                  
+                            // La fonction complete sera appelée à la fin de la requête AJAX
+                            console.log('Requête AJAX terminée.');
+                        }
+                    });
+                });
 
                 $('#ng1DeleteBiens').on('click', function() {
+                
                     // Appel AJAX pour lancer l'import
                     $.ajax({
                         type: 'POST',
                         url: ajaxurl, // L'URL AJAX de WordPress
                         data: {
                             action: 'ng1_delete_biens_ajax', // Action AJAX à traiter dans vos fonctions PHP
-        
                             security: '<?php echo wp_create_nonce("ng1_delete_biens_ajax_nonce"); ?>', // Sécurité contre les attaques CSRF
                         },
                         success: function(response) {
@@ -112,6 +118,45 @@ class ng1BienImmobilierImportPage {
                         }
                     });
                 });
+                function initProgressData() {
+             
+                    $.ajax({
+                        type: 'POST',
+                        url: ajaxurl, // URL de l'API AJAX de WordPress
+                        data: {
+                            action: 'ng1_init_progress_data_ajax', // Action AJAX pour récupérer les données
+                            security: '<?php echo wp_create_nonce("ng1_init_progress_data_ajax_nonce"); ?>', // Sécurité CSRF
+                        },
+                        success: function(response) {
+                            // Mettre à jour le contenu de la div avec les données de progression récupérées
+                            $('.ng1-import-progress').html('');
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(error);
+                            console.error("Erreur lors de la récupération des données de progression :", error);
+                        }
+                    });
+                }
+                function updateProgressData() {
+             
+                    $.ajax({
+                        type: 'POST',
+                        url: ajaxurl, // URL de l'API AJAX de WordPress
+                        data: {
+                            action: 'ng1_get_progress_data_ajax', // Action AJAX pour récupérer les données
+                            security: '<?php echo wp_create_nonce("ng1_get_progress_data_ajax_nonce"); ?>', // Sécurité CSRF
+                        },
+                        success: function(response) {
+                            
+                            // Mettre à jour le contenu de la div avec les données de progression récupérées
+                            $('.ng1-import-progress').html(JSON.stringify(response));
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(error);
+                            console.error("Erreur lors de la récupération des données de progression :", error);
+                        }
+                    });
+                }
             });
         </script>
         <?php
@@ -133,7 +178,38 @@ class ng1BienImmobilierImportPage {
 
     }
 
+    // Fonction AJAX pour récupérer le contenu du fichier JSON de progression
+    public function ng1_get_progress_data_ajax() {
+        // Chemin du fichier JSON de progression
+        $progressFilePath = WP_CONTENT_DIR . '/progress_data.json';
 
+        // Vérifier si le fichier existe
+        if (file_exists($progressFilePath)) {
+            // Lire le contenu du fichier JSON
+            $progressData = file_get_contents($progressFilePath);
+            // Envoyer le contenu au format JSON
+            wp_send_json_success(json_decode($progressData, true));
+        } else {
+            // Si le fichier n'existe pas, renvoyer une réponse JSON vide
+            wp_send_json_success(array());
+        }
+    }
+    public function ng1_init_progress_data_ajax() {
+        // Chemin du fichier JSON de progression
+        $progressFilePath = WP_CONTENT_DIR . '/progress_data.json';
+    
+        // Supprimer le contenu du fichier en écrivant une chaîne vide
+        file_put_contents($progressFilePath, '');
+    
+        // Vérifier si le fichier a été correctement vidé
+        if (filesize($progressFilePath) === 0) {
+            // Envoyer une réponse JSON de succès
+            wp_send_json_success(array('success' => true));
+        } else {
+            // Envoyer une réponse JSON d'erreur si le fichier n'a pas pu être vidé
+            wp_send_json_error(array('message' => 'Erreur lors de la suppression du contenu du fichier.'));
+        }
+    }
     // Fonction de gestion AJAX pour l'import
     public function import_bien_ajax() {
         $ng1_immobilier_import_file_path = get_option('ng1_immobilier_import_file_path');
@@ -169,6 +245,8 @@ class ng1BienImmobilierImportPage {
         }
         wp_send_json($response);
     }
+
+    
     public function delete_biens_ajax() {
        check_ajax_referer('ng1_delete_biens_ajax_nonce', 'security');
     

@@ -20,6 +20,8 @@ class Ng1ImmobilierTaxonomyVille {
             'show_ui'                    => true,
             'show_admin_column'          => true,
             'query_var'                  => true,
+            'show_in_rest'               => true,
+            'publicly_queryable'         => true,
             'rewrite'                    => array('slug' => 'ville'),
             // Ajoutez d'autres paramètres selon vos besoins
         );
